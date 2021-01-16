@@ -1,0 +1,50 @@
+package dp;
+
+// https://leetcode.com/problems/matrix-block-sum/
+// Matrix Block Sum
+// 참고(DP) : https://leetcode.com/problems/matrix-block-sum/discuss/561884/Java-DP-Solution-Clean-Code-O(m*n)
+
+public class Q1314 {
+    public int[][] matrixBlockSum(int[][] mat, int K) {
+        final int HEIGHT = mat.length, WIDTH = mat[0].length;
+        int[][] answer = new int[HEIGHT][WIDTH];
+        for (int i = 0; i < HEIGHT; i++) {
+            for (int j = 0; j < WIDTH; j++) {
+                int sum = 0;
+                for (int ii = Math.max(0, i - K), iiLen = Math.min(HEIGHT, i + K + 1); ii < iiLen; ii++) {
+                    for (int jj = Math.max(0, j - K), jjLen = Math.min(WIDTH, j + K + 1); jj < jjLen; jj++) {
+                        sum += mat[ii][jj];
+                    }
+                }
+                answer[i][j] = sum;
+            }
+        }
+        return answer;
+    }
+    public int[][] matrixBlockSum1(int[][] mat, int K) {
+        int m = mat.length;
+        int n = mat[0].length;
+
+        int[][] ans = new int[m][n];
+
+        int[][] t = new int[m + 1][n + 1];
+
+        for (int i = 1; i < t.length; i++) {
+            for (int j = 1; j < t[0].length; j++) {
+                t[i][j] = t[i - 1][j] + t[i][j - 1] + mat[i - 1][j - 1] - t[i - 1][j - 1];
+            }
+        }
+
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                int r1 = Math.max(0, i - K) + 1;
+                int c1 = Math.max(0, j - K) + 1;
+                int r2 = Math.min(m, i + K + 1);
+                int c2 = Math.min(n, j + K + 1);
+                ans[i][j] = t[r2][c2] - t[r1 - 1][c2] - t[r2][c1 - 1] + t[r1 - 1][c1 - 1];
+            }
+        }
+
+        return ans;
+    }
+}
